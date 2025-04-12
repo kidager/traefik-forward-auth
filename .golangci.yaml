@@ -10,3 +10,8 @@ linters:
   disable:
     - ineffassign
     - unused
+  exclusions:
+    rules:
+      - text: "SA5008:" # duplicate struct tag "choice"
+        linters:
+          - staticcheck
