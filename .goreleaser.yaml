@@ -18,9 +18,7 @@ archives:
       - binary
 
 kos:
-  - repositories:
-      - "{{ .Env.REPOSITORY_NAME }}"
-    tags:
+  - tags:
       - "{{.Version}}"
       - latest
     bare: true

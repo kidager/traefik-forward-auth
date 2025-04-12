@@ -48,4 +48,4 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ github.TOKEN }}
-          REPOSITORY_NAME: ${{ github.repository }}
+          KO_DOCKER_REPO: ${{ github.repository }}
