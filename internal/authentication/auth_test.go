@@ -2,11 +2,12 @@ package authentication
 
 import (
 	"fmt"
-	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
-	"github.com/mesosphere/traefik-forward-auth/internal/util"
 	"net/http"
 	"testing"
 	"time"
+
+	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
+	"github.com/mesosphere/traefik-forward-auth/internal/util"
 
 	"github.com/stretchr/testify/assert"
 )
@@ -198,13 +199,13 @@ func TestAuthValidateCSRFCookie(t *testing.T) {
 	valid, _, err := ValidateCSRFCookie(r, c)
 	assert.False(valid)
 	if assert.Error(err) {
-		assert.Equal("Invalid CSRF cookie value", err.Error())
+		assert.Equal("invalid CSRF cookie value", err.Error())
 	}
 	c.Value = "123456789012345678901234567890123"
 	valid, _, err = ValidateCSRFCookie(r, c)
 	assert.False(valid)
 	if assert.Error(err) {
-		assert.Equal("Invalid CSRF cookie value", err.Error())
+		assert.Equal("invalid CSRF cookie value", err.Error())
 	}
 
 	// Should require valid state
@@ -213,7 +214,7 @@ func TestAuthValidateCSRFCookie(t *testing.T) {
 	valid, _, err = ValidateCSRFCookie(r, c)
 	assert.False(valid)
 	if assert.Error(err) {
-		assert.Equal("Invalid CSRF state value", err.Error())
+		assert.Equal("invalid CSRF state value", err.Error())
 	}
 
 	// Should allow valid state
