@@ -3,6 +3,10 @@ name: 🧪 Test
 on:
   pull_request:
 
+concurrency:
+  group: test-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
 jobs:
   test:
     runs-on: ubuntu-latest
