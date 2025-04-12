@@ -14,19 +14,6 @@ updates:
           - "minor"
           - "patch"
 
-  - package-ecosystem: "docker"
-    directory: "/"
-    target-branch: "main"
-    schedule:
-      interval: daily
-    commit-message:
-      prefix: deps
-    groups:
-      minor-versions:
-        update-types:
-          - "minor"
-          - "patch"
-
   - package-ecosystem: "gomod"
     directory: "/"
     target-branch: "main"
