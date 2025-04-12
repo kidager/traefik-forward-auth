@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.2](https://github.com/kidager/traefik-forward-auth/compare/v1.1.1...v1.1.2) (2025-04-12)
+
+
+### Bug Fixes
+
+* **GoReleaser:** update deprecated config ([3c4e699](https://github.com/kidager/traefik-forward-auth/commit/3c4e69903f202d3699591e63c10d74fb7b4dc124))
+
 ## [1.1.1](https://github.com/kidager/traefik-forward-auth/compare/v1.1.0...v1.1.1) (2025-04-12)
 
 
