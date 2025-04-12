@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/kidager/traefik-forward-auth/compare/v1.0.1...v1.1.0) (2025-04-12)
+
+
+### Features
+
+* parse go version from go.mod and fix Dockerfile ([607760e](https://github.com/kidager/traefik-forward-auth/commit/607760e49d581acecf56e42ebdb6f60473683b2d))
+
 ## [1.0.1](https://github.com/kidager/traefik-forward-auth/compare/v1.0.0...v1.0.1) (2025-04-12)
 
 
