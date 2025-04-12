@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.3](https://github.com/kidager/traefik-forward-auth/compare/v1.1.2...v1.1.3) (2025-04-12)
+
+
+### Bug Fixes
+
+* **GoReleaser:** typo ([2439ccf](https://github.com/kidager/traefik-forward-auth/commit/2439ccf2ad24b5b1a292c6e9d29bc39575f3a19c))
+
 ## [1.1.2](https://github.com/kidager/traefik-forward-auth/compare/v1.1.1...v1.1.2) (2025-04-12)
 
 
