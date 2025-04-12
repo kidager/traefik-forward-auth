@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.4](https://github.com/kidager/traefik-forward-auth/compare/v1.1.3...v1.1.4) (2025-04-12)
+
+
+### Bug Fixes
+
+* **GoReleaser:** use `KO_DOCKER_REPO` to define repo name ([eaf6bf5](https://github.com/kidager/traefik-forward-auth/commit/eaf6bf59c1176705d40ac8c07690e8c6370b83c7))
+
 ## [1.1.3](https://github.com/kidager/traefik-forward-auth/compare/v1.1.2...v1.1.3) (2025-04-12)
 
 
