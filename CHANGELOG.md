@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.1](https://github.com/kidager/traefik-forward-auth/compare/v3.3.0...v3.3.1) (2025-04-12)
+
+
+### Bug Fixes
+
+* clear all cookies ([e45f9fe](https://github.com/kidager/traefik-forward-auth/commit/e45f9fe5f2bf5cde9cdb18f8f4ee234cf16556b0))
+
 ## [3.3.0](https://github.com/kidager/traefik-forward-auth/compare/v3.2.0...v3.3.0) (2025-04-12)
 
 
