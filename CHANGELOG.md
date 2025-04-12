@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.3.0](https://github.com/kidager/traefik-forward-auth/compare/v3.2.0...v3.3.0) (2025-04-12)
+
+
+### Features
+
+* add logout ([72b2809](https://github.com/kidager/traefik-forward-auth/commit/72b28094622d7afe0417e89495be00e122a292b9))
+
 ## [3.2.0](https://github.com/kidager/traefik-forward-auth/compare/v1.1.4...v3.2.0) (2025-04-12)
 
 
