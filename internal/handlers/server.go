@@ -398,7 +398,9 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 func (s *Server) LogoutHandler() http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		// Clear cookie
+		http.SetCookie(w, s.authenticator.ClearIDCookie(r))
 		http.SetCookie(w, s.authenticator.ClearCSRFCookie(r))
+		http.SetCookie(w, s.authenticator.ClearNameCookie(r))
 		logger := s.logger(r, "default", "Handling callback")
 
 		logger.Info("Logged out user")

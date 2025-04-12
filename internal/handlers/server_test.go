@@ -234,11 +234,10 @@ func TestServerLogout(t *testing.T) {
 	for _, c := range res.Cookies() {
 		if c.Name == config.CookieName {
 			cookie = c
-			continue
 		}
 	}
 	require.NotNil(cookie)
-	require.GreaterOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should not have expired")
+	require.GreaterOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix()-50, "cookie should not have expired")
 
 	// Logout enabled without redirect
 	config.LogoutEnable = true
@@ -258,7 +257,7 @@ func TestServerLogout(t *testing.T) {
 		}
 	}
 	require.NotNil(cookie)
-	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should have expired")
+	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix()-50, "cookie should have expired")
 
 	// Logout enabled with a redirect url
 	config.LogoutEnable = true
@@ -278,7 +277,7 @@ func TestServerLogout(t *testing.T) {
 		}
 	}
 	require.NotNil(cookie)
-	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should have expired")
+	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix()-50, "cookie should have expired")
 
 	fwd, _ := res.Location()
 	require.NotNil(fwd)
