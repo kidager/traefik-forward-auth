@@ -5,13 +5,14 @@ version: 2
 
 builds:
   - main: ./cmd/
-  - env:
+    env:
       - CGO_ENABLED=0
     goos:
       - linux
     goarch:
       - amd64
       - arm64
+
 archives:
   - formats:
       - binary
