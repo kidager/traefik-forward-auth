@@ -172,11 +172,11 @@ func ValidateCSRFCookie(r *http.Request, c *http.Cookie) (bool, string, error) {
 	state := r.URL.Query().Get("state")
 
 	if len(c.Value) != 32 {
-		return false, "", errors.New("Invalid CSRF cookie value")
+		return false, "", errors.New("invalid CSRF cookie value")
 	}
 
 	if len(state) < 34 {
-		return false, "", errors.New("Invalid CSRF state value")
+		return false, "", errors.New("invalid CSRF state value")
 	}
 
 	// Check nonce match

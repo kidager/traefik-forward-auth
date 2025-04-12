@@ -22,7 +22,7 @@ const (
 	// This creates a higher guarantee that your informer’s store has a perfect picture of the resources it is watching.
 	// There are situations where events can be missed entirely and resyncing every so often solves this.
 	// Setting to 0 disables the resync and makes the informer subscribe to individual updates only.
-	defaultResyncDuration =  time.Minute * 10
+	defaultResyncDuration = time.Minute * 10
 )
 
 // Logger is an interface for basic log output
@@ -183,17 +183,17 @@ func nonResourceURLMatches(rule *rbacv1.PolicyRule, requestedURL *url.URL) bool 
 			return true
 		} else if len(ruleURL) > 0 {
 			// determine match type depending on the first rune:
-
-			if ruleURL[0] == '~' { // regular expression match against the full url requested
+			switch ruleURL[0] {
+			case '~': // regular expression match against the full url requested
 				fullURLWithoutQuery := requestedURL.Scheme + "://" + requestedURL.Host + requestedURL.Path
 				if authorization.URLMatchesRegexp(fullURLWithoutQuery, ruleURL[1:]) {
 					return true // return only if it matched
 				}
-			} else if ruleURL[0] == '/' { // path-only prefix match with optional wildcards (backward-compatible)
+			case '/': // path-only prefix match with optional wildcards (backward-compatible)
 				if authorization.URLMatchesWildcardPattern(requestedURL.Path, ruleURL) {
 					return true // return only if it matched
 				}
-			} else { // full url path-only prefix match with optional wildcards
+			default: // full url path-only prefix match with optional wildcards
 				fullURLWithoutQuery := requestedURL.Scheme + "://" + requestedURL.Host + requestedURL.Path
 				if authorization.URLMatchesWildcardPattern(fullURLWithoutQuery, ruleURL) {
 					return true // return only if it matched
@@ -210,7 +210,7 @@ func nonResourceURLMatches(rule *rbacv1.PolicyRule, requestedURL *url.URL) bool 
 // If caseInsensitive is true, the case of the characters is ignored, meaning "UserName"
 // would be considered equal to "username".
 func compareSubjects(s1, s2 string, caseInsensitive bool) bool {
-	if caseInsensitive == false {
+	if !caseInsensitive {
 		return s1 == s2
 	}
 	return strings.EqualFold(s1, s2)

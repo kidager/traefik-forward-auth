@@ -55,7 +55,6 @@ func (uc *UserInfoCache) Save(claimsId string, info *v1alpha1.UserInfo) {
 		userInfo: info,
 	}
 	uc.infos[claimsId] = record
-	return
 }
 
 func (uc *UserInfoCache) Delete(claimsId string) {

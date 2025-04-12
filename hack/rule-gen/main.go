@@ -4,7 +4,6 @@ package main
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"gopkg.in/yaml.v2"
@@ -48,7 +47,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	c, err := ioutil.ReadFile(os.Args[1])
+	c, err := os.ReadFile(os.Args[1])
 	if err != nil {
 		fmt.Printf("could not read: %s\n", os.Args[1])
 		os.Exit(1)

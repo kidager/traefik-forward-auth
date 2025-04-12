@@ -1,6 +1,6 @@
 module github.com/mesosphere/traefik-forward-auth
 
-go 1.23
+go 1.24
 
 require (
 	github.com/containous/traefik v2.0.0-beta1+incompatible

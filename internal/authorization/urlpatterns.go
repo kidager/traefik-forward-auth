@@ -31,8 +31,7 @@ func (rc *regexpCache) get(expr string) *regexp.Regexp {
 	rc.mu.RLock()
 	defer rc.mu.RUnlock()
 
-	re, _ := rc.cache[expr]
-	return re
+	return rc.cache[expr]
 }
 
 // wildcardPatternToRegexp converts pattern containing optional * characters

@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
-	neturl "net/url"
 	"strings"
 
 	"github.com/mesosphere/traefik-forward-auth/internal/api/storage/v1alpha1"
@@ -100,7 +99,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 	// Modify request
 	r.Method = r.Header.Get("X-Forwarded-Method")
 	r.Host = r.Header.Get("X-Forwarded-Host")
-	r.URL, _ = neturl.Parse(authentication.GetRequestURI(r))
+	r.URL, _ = url.Parse(authentication.GetRequestURI(r))
 
 	if s.config.AuthHost == "" || len(s.config.CookieDomains) > 0 || r.Host == s.config.AuthHost {
 		s.router.ServeHTTP(w, r)
@@ -110,7 +109,7 @@ func (s *Server) RootHandler(w http.ResponseWriter, r *http.Request) {
 		url.Scheme = r.Header.Get("X-Forwarded-Proto")
 		url.Host = s.config.AuthHost
 		logger.Debugf("redirect to %v", url.String())
-		http.Redirect(w, r, url.String(), 307)
+		http.Redirect(w, r, url.String(), http.StatusTemporaryRedirect)
 	}
 }
 
@@ -151,7 +150,7 @@ func (s *Server) AuthHandler(rule string) http.HandlerFunc {
 			logger.WithFields(logrus.Fields{
 				"email": id.Email,
 			}).Errorf("Invalid email")
-			http.Error(w, "Not authorized", 401)
+			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -184,7 +183,7 @@ func (s *Server) AuthHandler(rule string) http.HandlerFunc {
 			targetURL, err := url.Parse(requestURL)
 			if err != nil {
 				logger.Errorf("unable to parse target URL %s: %v", requestURL, err)
-				http.Error(w, "Bad Gateway", 502)
+				http.Error(w, "Bad Gateway", http.StatusBadGateway)
 				return
 			}
 
@@ -192,14 +191,14 @@ func (s *Server) AuthHandler(rule string) http.HandlerFunc {
 			authorized, err := s.authorizer.Authorize(kubeUserInfo, r.Method, targetURL)
 			if err != nil {
 				logger.Errorf("error while authorizing %s: %v", kubeUserInfo, err)
-				http.Error(w, "Bad Gateway", 502)
+				http.Error(w, "Bad Gateway", http.StatusBadGateway)
 				return
 			}
 
 			if !authorized {
 				logger.Infof("user %s is not authorized to `%s` in %s", kubeUserInfo.GetName(), r.Method, targetURL)
 				//TODO:k3a: consider some kind of re-auth to recheck for new groups
-				http.Error(w, "Not Authorized", 401)
+				http.Error(w, "Not Authorized", http.StatusUnauthorized)
 				return
 			}
 
@@ -265,7 +264,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		c, err := r.Cookie(s.config.CSRFCookieName)
 		if err != nil {
 			logger.Errorf("missing CSRF cookie: %v", err)
-			http.Error(w, "Not authorized", 401)
+			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -273,7 +272,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		valid, redirect, err := authentication.ValidateCSRFCookie(r, c)
 		if !valid {
 			logger.Errorf("error validating CSRF cookie: %v", err)
-			http.Error(w, "Not authorized", 401)
+			http.Error(w, "Not authorized", http.StatusUnauthorized)
 			return
 		}
 
@@ -302,7 +301,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		oauth2Token, err := oauth2Config.Exchange(s.config.OIDCContext, r.URL.Query().Get("code"))
 		if err != nil {
 			logger.Errorf("failed to exchange token: %v", err)
-			http.Error(w, "Bad Gateway", 502)
+			http.Error(w, "Bad Gateway", http.StatusBadGateway)
 			return
 		}
 
@@ -310,7 +309,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		rawIDToken, ok := oauth2Token.Extra("id_token").(string)
 		if !ok {
 			logger.Error("missing ID token")
-			http.Error(w, "Bad Gateway", 502)
+			http.Error(w, "Bad Gateway", http.StatusBadGateway)
 			return
 		}
 
@@ -319,7 +318,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		idToken, err := verifier.Verify(s.config.OIDCContext, rawIDToken)
 		if err != nil {
 			logger.Errorf("failed to verify token: %v", err)
-			http.Error(w, "Bad Gateway", 502)
+			http.Error(w, "Bad Gateway", http.StatusBadGateway)
 			return
 		}
 
@@ -327,7 +326,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 		var claims map[string]interface{}
 		if err := idToken.Claims(&claims); err != nil {
 			logger.Errorf("failed to extract claims: %v", err)
-			http.Error(w, "Bad Gateway", 502)
+			http.Error(w, "Bad Gateway", http.StatusBadGateway)
 			return
 		}
 
@@ -342,7 +341,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 			c, err := s.authenticator.MakeIDCookie(r, email.(string), token)
 			if err != nil {
 				logger.Errorf("error generating secure session cookie: %v", err)
-				http.Error(w, "Bad Gateway", 502)
+				http.Error(w, "Bad Gateway", http.StatusBadGateway)
 				return
 			}
 			http.SetCookie(w, c)
@@ -381,7 +380,7 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 			Groups:   groups,
 		}); err != nil {
 			logger.Errorf("error saving session: %v", err)
-			http.Error(w, "Bad Gateway", 502)
+			http.Error(w, "Bad Gateway", http.StatusBadGateway)
 			return
 		}
 
@@ -415,14 +414,15 @@ func (s *Server) notAuthenticated(logger *logrus.Entry, w http.ResponseWriter, r
 	logger.Warnf("Non-HTML request: %v", acceptHeader)
 
 	errStr := "Authentication expired. Reload page to re-authenticate."
-	if bestFormat == "json" {
+	switch bestFormat {
+	case "json":
 		w.Header().Set("Content-Type", "application/json")
-		http.Error(w, `{"error": "`+errStr+`"}`, 401)
-	} else if bestFormat == "xml" {
+		http.Error(w, `{"error": "`+errStr+`"}`, http.StatusUnauthorized)
+	case "xml":
 		w.Header().Set("Content-Type", "application/xml")
-		http.Error(w, `<errors><error>`+errStr+`</error></errors>`, 401)
-	} else {
-		http.Error(w, errStr, 401)
+		http.Error(w, `<errors><error>`+errStr+`</error></errors>`, http.StatusUnauthorized)
+	default:
+		http.Error(w, errStr, http.StatusUnauthorized)
 	}
 }
 
@@ -432,7 +432,7 @@ func (s *Server) authRedirect(logger *logrus.Entry, w http.ResponseWriter, r *ht
 	nonce, err := authentication.GenerateNonce()
 	if err != nil {
 		logger.Errorf("error generating nonce, %v", err)
-		http.Error(w, "Service unavailable", 503)
+		http.Error(w, "Service unavailable", http.StatusServiceUnavailable)
 		return
 	}
 
@@ -464,8 +464,6 @@ func (s *Server) authRedirect(logger *logrus.Entry, w http.ResponseWriter, r *ht
 	state := fmt.Sprintf("%s:%s", nonce, authentication.GetRequestURL(r))
 
 	http.Redirect(w, r, oauth2Config.AuthCodeURL(state), http.StatusFound)
-
-	return
 }
 
 // logger provides a new logger enriched with request info

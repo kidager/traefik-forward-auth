@@ -3,11 +3,11 @@ package cluster
 import (
 	"context"
 	"crypto/hmac"
+	"crypto/rand"
 	"crypto/sha256"
 	"encoding/json"
 	"errors"
 	"fmt"
-	"math/rand"
 	"net/http"
 	"strings"
 	"time"
@@ -208,7 +208,7 @@ func (cs *ClusterStorage) getSecretByClaim(claimsId string) (*corev1.Secret, err
 	}
 
 	for _, s := range secrets.Items {
-		cid, ok := s.ObjectMeta.Labels[storage.ClaimsIDLabel]
+		cid, ok := s.Labels[storage.ClaimsIDLabel]
 		if !ok {
 			logger.Errorf(
 				fmt.Sprintf("found managed secret not containing claimID: offender: %s/%s", s.Namespace, s.Name))
