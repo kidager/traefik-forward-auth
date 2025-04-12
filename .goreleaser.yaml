@@ -1,7 +1,10 @@
 # yaml-language-server: $schema=https://goreleaser.com/static/schema.json
 project_name: traefik-forward-auth
 
+version: 2
+
 builds:
+  - main: ./cmd/
   - env:
       - CGO_ENABLED=0
     goos:
@@ -10,10 +13,12 @@ builds:
       - amd64
       - arm64
 archives:
-  - format: binary
+  - formats:
+      - binary
 
 kos:
-  - repository: "{{ .Env.REPOSITORY_NAME }}"
+  - repositories:
+      - "{{ .Env.REPOSITORY_NAME }}"
     tags:
       - "{{.Version}}"
       - latest
