@@ -1,5 +1,13 @@
 # Changelog
 
+## [3.2.0](https://github.com/kidager/traefik-forward-auth/compare/v1.1.4...v3.2.0) (2025-04-12)
+
+
+### Miscellaneous Chores
+
+* release 3.2.0 ([0620242](https://github.com/kidager/traefik-forward-auth/commit/0620242e957e5b410e2a81bbd164e6c176a23872))
+* update deps ([0389091](https://github.com/kidager/traefik-forward-auth/commit/0389091747970ef8f32a0c055abf4993d4dac6d8))
+
 ## [1.1.4](https://github.com/kidager/traefik-forward-auth/compare/v1.1.3...v1.1.4) (2025-04-12)
 
 
