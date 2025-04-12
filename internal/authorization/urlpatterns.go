@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/features"
+	"github.com/kidager/traefik-forward-auth/internal/features"
 )
 
 var (

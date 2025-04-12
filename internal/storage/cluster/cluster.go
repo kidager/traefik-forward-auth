@@ -12,15 +12,15 @@ import (
 	"strings"
 	"time"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/authentication"
+	"github.com/kidager/traefik-forward-auth/internal/authentication"
 
 	"github.com/sirupsen/logrus"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/api/storage/v1alpha1"
-	"github.com/mesosphere/traefik-forward-auth/internal/storage"
+	"github.com/kidager/traefik-forward-auth/internal/api/storage/v1alpha1"
+	"github.com/kidager/traefik-forward-auth/internal/storage"
 )
 
 var (

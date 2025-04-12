@@ -18,9 +18,9 @@ import (
 	"github.com/sirupsen/logrus"
 	"github.com/thomseddon/go-flags"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/features"
-	internallog "github.com/mesosphere/traefik-forward-auth/internal/log"
-	"github.com/mesosphere/traefik-forward-auth/internal/util"
+	"github.com/kidager/traefik-forward-auth/internal/features"
+	internallog "github.com/kidager/traefik-forward-auth/internal/log"
+	"github.com/kidager/traefik-forward-auth/internal/util"
 )
 
 var (
@@ -35,6 +35,8 @@ type Config struct {
 	ProviderURI             string               `long:"provider-uri" env:"PROVIDER_URI" description:"OIDC Provider URI"`
 	ClientID                string               `long:"client-id" env:"CLIENT_ID" description:"Client ID"`
 	ClientSecret            string               `long:"client-secret" env:"CLIENT_SECRET" description:"Client Secret" json:"-"`
+	LogoutEnable            bool                 `long:"logout-enable" env:"LOGOUT_ENABLE" description:"Enable logout"`
+	LogoutRedirectUrl       string               `long:"logout-redirect-url" env:"LOGOUT_REDIRECT_URL" description:"URL to redirect to after logout"`
 	Scope                   string               `long:"scope" env:"SCOPE" description:"Define scope"`
 	AuthHost                string               `long:"auth-host" env:"AUTH_HOST" description:"Single host to use when returning from 3rd party auth"`
 	Config                  func(s string) error `long:"config" env:"CONFIG" description:"Path to config file" json:"-"`
@@ -77,7 +79,7 @@ type Config struct {
 	ServiceAccountToken string
 
 	// Flags
-	EnableV3URLPatternMatching bool `long:"enable-v3-url-pattern-matching" env:"ENABLE_V3_URL_PATTERN_MATCHING" description:"Specifies weather to use v3 URL pattern matching as implemented in this commit: https://github.com/mesosphere/traefik-forward-auth/commit/36c3eee4c9fa262064848d4ddaca6652b96763b5"`
+	EnableV3URLPatternMatching bool `long:"enable-v3-url-pattern-matching" env:"ENABLE_V3_URL_PATTERN_MATCHING" description:"Specifies weather to use v3 URL pattern matching as implemented in this commit: https://github.com/kidager/traefik-forward-auth/commit/36c3eee4c9fa262064848d4ddaca6652b96763b5"`
 }
 
 // NewConfig loads config from provided args or uses os.Args if nil

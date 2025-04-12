@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"fmt"
-	"github.com/coreos/go-oidc"
-	"github.com/mesosphere/traefik-forward-auth/internal/api/storage/v1alpha1"
 	"io/ioutil"
 	"net/http"
 	"net/http/httptest"
@@ -11,13 +9,17 @@ import (
 	"testing"
 	"time"
 
+	"github.com/coreos/go-oidc"
+	"github.com/kidager/traefik-forward-auth/internal/api/storage/v1alpha1"
+
 	"github.com/gorilla/sessions"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"k8s.io/client-go/kubernetes/fake"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/authentication"
-	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
-	intlog "github.com/mesosphere/traefik-forward-auth/internal/log"
+	"github.com/kidager/traefik-forward-auth/internal/authentication"
+	"github.com/kidager/traefik-forward-auth/internal/configuration"
+	intlog "github.com/kidager/traefik-forward-auth/internal/log"
 )
 
 var (
@@ -206,6 +208,84 @@ func TestServerAuthHandlerValid(t *testing.T) {
 //	assert.Equal("redirect", fwd.Host, "valid request should be redirected to return url")
 //	assert.Equal("", fwd.Path, "valid request should be redirected to return url")
 //}
+
+func TestServerLogout(t *testing.T) {
+	require := require.New(t)
+	assert := assert.New(t)
+	config := newTestConfig(testAuthKey1, testEncKey1)
+
+	a := authentication.NewAuthenticator(config)
+
+	// Assume we have a valid cookie
+	defaultReq := newDefaultHTTPRequest("/")
+	cookie, err := a.MakeIDCookie(defaultReq, "test@example.com", "")
+	assert.Nil(err)
+
+	// Logout disabled
+	config.LogoutEnable = false
+
+	req := newDefaultHTTPRequest("/_oauth/logout")
+	res, _ := doHttpRequest(req, cookie, config)
+	// Should redirect or return 200, but not 401
+	require.NotEqual(http.StatusUnauthorized, res.StatusCode, "should not return a 401")
+
+	// Check for cookie
+	cookie = nil
+	for _, c := range res.Cookies() {
+		if c.Name == config.CookieName {
+			cookie = c
+			continue
+		}
+	}
+	require.NotNil(cookie)
+	require.GreaterOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should not have expired")
+
+	// Logout enabled without redirect
+	config.LogoutEnable = true
+	config.LogoutRedirectUrl = ""
+
+	cookie, err = a.MakeIDCookie(defaultReq, "test@example.com", "")
+	assert.Nil(err)
+	req = newDefaultHTTPRequest("/_oauth/logout")
+	res, _ = doHttpRequest(req, cookie, config)
+	require.Equal(http.StatusUnauthorized, res.StatusCode, "should return a 401")
+
+	// Check for cookie
+	cookie = nil
+	for _, c := range res.Cookies() {
+		if c.Name == config.CookieName {
+			cookie = c
+		}
+	}
+	require.NotNil(cookie)
+	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should have expired")
+
+	// Logout enabled with a redirect url
+	config.LogoutEnable = true
+	config.LogoutRedirectUrl = "http://redirect/path"
+
+	cookie, err = a.MakeIDCookie(defaultReq, "test@example.com", "")
+	assert.Nil(err)
+	req = newDefaultHTTPRequest("/_oauth/logout")
+	res, _ = doHttpRequest(req, cookie, config)
+	require.Equal(http.StatusTemporaryRedirect, res.StatusCode, "should return a 307")
+
+	// Check for cookie
+	cookie = nil
+	for _, c := range res.Cookies() {
+		if c.Name == config.CookieName {
+			cookie = c
+		}
+	}
+	require.NotNil(cookie)
+	require.LessOrEqual(cookie.Expires.Local().Unix(), time.Now().Local().Unix(), "cookie should have expired")
+
+	fwd, _ := res.Location()
+	require.NotNil(fwd)
+	assert.Equal("http", fwd.Scheme, "valid request should be redirected to return url")
+	assert.Equal("redirect", fwd.Host, "valid request should be redirected to return url")
+	assert.Equal("/path", fwd.Path, "valid request should be redirected to return url")
+}
 
 func TestServerDefaultAction(t *testing.T) {
 	assert := assert.New(t)

@@ -6,19 +6,19 @@ import (
 	"net/url"
 	"strings"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/api/storage/v1alpha1"
-	"github.com/mesosphere/traefik-forward-auth/internal/authentication"
-	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
+	"github.com/kidager/traefik-forward-auth/internal/api/storage/v1alpha1"
+	"github.com/kidager/traefik-forward-auth/internal/authentication"
+	"github.com/kidager/traefik-forward-auth/internal/configuration"
 
 	"github.com/containous/traefik/pkg/rules"
 	"github.com/coreos/go-oidc"
-	"github.com/mesosphere/traefik-forward-auth/internal/authorization/rbac"
+	"github.com/kidager/traefik-forward-auth/internal/authorization/rbac"
 	"github.com/sirupsen/logrus"
 	"golang.org/x/oauth2"
 	"k8s.io/client-go/kubernetes"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/authorization"
-	internallog "github.com/mesosphere/traefik-forward-auth/internal/log"
+	"github.com/kidager/traefik-forward-auth/internal/authorization"
+	internallog "github.com/kidager/traefik-forward-auth/internal/log"
 )
 
 const (
@@ -77,6 +77,11 @@ func (s *Server) buildRoutes() {
 
 	// Add callback handler
 	s.router.Handle(s.config.Path, s.AuthCallbackHandler())
+
+	if s.config.LogoutEnable {
+		// Add logout handler
+		s.router.Handle(s.config.Path+"/logout", s.LogoutHandler())
+	}
 
 	// Add a default handler
 	if s.config.DefaultAction == "allow" {
@@ -386,6 +391,23 @@ func (s *Server) AuthCallbackHandler() http.HandlerFunc {
 
 		// Redirect
 		http.Redirect(w, r, redirect, http.StatusTemporaryRedirect)
+	}
+}
+
+// LogoutHandler logs a user out
+func (s *Server) LogoutHandler() http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		// Clear cookie
+		http.SetCookie(w, s.authenticator.ClearCSRFCookie(r))
+		logger := s.logger(r, "default", "Handling callback")
+
+		logger.Info("Logged out user")
+
+		if s.config.LogoutRedirectUrl != "" {
+			http.Redirect(w, r, s.config.LogoutRedirectUrl, http.StatusTemporaryRedirect)
+		} else {
+			http.Error(w, "You have been logged out", http.StatusUnauthorized)
+		}
 	}
 }
 

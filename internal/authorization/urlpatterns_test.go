@@ -5,7 +5,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/features"
+	"github.com/kidager/traefik-forward-auth/internal/features"
 )
 
 func TestWildcardMatches(t *testing.T) {

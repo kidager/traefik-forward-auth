@@ -10,7 +10,7 @@ import (
 
 	"github.com/gorilla/securecookie"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
+	"github.com/kidager/traefik-forward-auth/internal/configuration"
 )
 
 type Authenticator struct {

@@ -4,7 +4,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/api/storage/v1alpha1"
+	"github.com/kidager/traefik-forward-auth/internal/api/storage/v1alpha1"
 )
 
 type UserInfoRecord struct {

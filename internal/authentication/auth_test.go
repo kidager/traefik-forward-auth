@@ -6,8 +6,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/mesosphere/traefik-forward-auth/internal/configuration"
-	"github.com/mesosphere/traefik-forward-auth/internal/util"
+	"github.com/kidager/traefik-forward-auth/internal/configuration"
+	"github.com/kidager/traefik-forward-auth/internal/util"
 
 	"github.com/stretchr/testify/assert"
 )

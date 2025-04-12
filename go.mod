@@ -1,4 +1,4 @@
-module github.com/mesosphere/traefik-forward-auth
+module github.com/kidager/traefik-forward-auth
 
 go 1.24
 
