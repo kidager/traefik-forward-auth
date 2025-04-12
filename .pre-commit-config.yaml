@@ -1,0 +1,35 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v5.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: check-case-conflict
+      - id: check-illegal-windows-names
+      - id: check-added-large-files
+      - id: check-executables-have-shebangs
+      - id: check-json
+      - id: check-symlinks
+      - id: check-yaml
+      - id: detect-private-key
+      - id: double-quote-string-fixer
+      - id: end-of-file-fixer
+      - id: forbid-new-submodules
+      - id: forbid-submodules
+      - id: mixed-line-ending
+      - id: trailing-whitespace
+
+  - repo: https://github.com/golangci/golangci-lint
+    rev: v2.1.0
+    hooks:
+      - id: golangci-lint
+
+  - repo: local
+    hooks:
+      - id: go-tidy
+        name: Go mod tidy
+        entry: go mod tidy
+        files: .*\.go$
+        language: system
+        pass_filenames: false

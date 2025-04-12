@@ -29,4 +29,3 @@ The instructions for [`thomseddon/traefik-forward-auth`](https://github.com/thom
 - config `session-key` (`SESSION_KEY` env) is now called `encryption-key` (`ENCRYPTION_KEY` env) and is `REQUIRED`
 - config `groups-session-name` (`GROUPS_SESSION_NAME`) is deprecated as both email and groups are part of the single cookie `cookie-name` (`COOKIE_NAME` env)
 - character `*` in existing RBAC rules now works within one path component only, so a single `*` has to be replaced with `**` to match the previous behavior (whether to use `*` or `**` is up to the person writing those rules)
-
