@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.1.1](https://github.com/kidager/traefik-forward-auth/compare/v1.1.0...v1.1.1) (2025-04-12)
+
+
+### Bug Fixes
+
+* **Dockerfile:** use the correct build-args argument ([05909da](https://github.com/kidager/traefik-forward-auth/commit/05909dac10a9ce70419d8888a031fba6e2ce3257))
+
+
+### Continuous Integration
+
+* use goreleaser to release ([#5](https://github.com/kidager/traefik-forward-auth/issues/5)) ([42f9021](https://github.com/kidager/traefik-forward-auth/commit/42f9021cfeccf565c811015ec2c6fcb94d4c7082))
+
 ## [1.1.0](https://github.com/kidager/traefik-forward-auth/compare/v1.0.1...v1.1.0) (2025-04-12)
 
 
